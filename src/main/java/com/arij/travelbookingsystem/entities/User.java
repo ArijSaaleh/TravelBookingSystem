@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,6 +20,7 @@ import java.util.HashSet;
 @Entity
 @Table(name = "_user")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class User implements UserDetails {
@@ -26,6 +28,8 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue
     private Long id;
+    private String firstname;
+    private String lastname;
     private String username;
     private String password;
     private String email;

@@ -3,73 +3,68 @@ package com.arij.travelbookingsystem.entities;
 import jakarta.persistence.*;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import java.util.HashSet;
 
 @Entity
-public class User {
+@Table(name = "_user")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue
     private Long id;
-    @Column(nullable = false, unique = true)
     private String username;
-    @Column(nullable = false)
     private String password;
-    @Column(nullable = false, unique = true)
-    private String mail;
-    public enum Role {
-        ROLE_USER,
-        ROLE_ADMIN,
-        ROLE_AGENT
-    }
-
-    @ElementCollection(fetch = FetchType.EAGER)
-    //rahou les roles bch ytsajlou fi seperate table(user_roles) w EAGER fetching indicates that the roles should be loaded eagerly (i.e., at the same time as the user entity) rather than lazily (i.e., when explicitly accessed).
-    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    private String email;
     @Enumerated(EnumType.STRING)
-    private Set<Role> roles = new HashSet<>();
+    private UserRole userRole;
 
-    public User() {
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(userRole.name()));
     }
 
-    public User(String username, String password, String mail, Set<Role> roles) {
-        this.username = username;
-        this.password = password;
-        this.mail = mail;
-        this.roles = roles;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
+    @Override
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    @Override
+    public String getUsername() {
+        return username;
     }
 
-    public String getMail() {
-        return mail;
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
-    public void setMail(String mail) {
-        this.mail = mail;
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }
